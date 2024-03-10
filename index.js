@@ -5,9 +5,11 @@ require('dotenv').config();
 
 const port = process.env.PORT;
 
+const allowlist = ['localhost:1114', 'mint.pepemetaai.co'];
+
 app.use(express.static('public'));
 app.use(cors({
-  origin: '*',
+  origin: allowlist,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 
