@@ -5,9 +5,7 @@ require('dotenv').config();
 
 const port = process.env.PORT;
 
-const whitelist = ['localhost:1114', 'mint.pepemetaai.co'];
-
-app.use(express.static('public'));
+const whitelist = ['http://localhost:1114', 'mint.pepemetaai.co'];
 app.use(cors({
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
@@ -23,6 +21,8 @@ app.use(cors({
   methods: "GET,PUT,POST,DELETE,UPDATE,OPTIONS,HEAD,PATCH",
   credentials: true,
 }));
+
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.send('SERVER STATICS');
