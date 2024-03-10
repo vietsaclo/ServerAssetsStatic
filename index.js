@@ -5,12 +5,23 @@ require('dotenv').config();
 
 const port = process.env.PORT;
 
-const allowlist = ['localhost:1114', 'mint.pepemetaai.co'];
+const whitelist = ['localhost:1114', 'mint.pepemetaai.co'];
 
 app.use(express.static('public'));
 app.use(cors({
-  origin: allowlist,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      console.info("=> Allowed cors for:", origin);
+      callback(null, true);
+    } else {
+      if (origin)
+        console.error("=> Blocked cors for:", origin);
+      callback(null, false);
+    }
+  },
+  allowedHeaders: "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
+  methods: "GET,PUT,POST,DELETE,UPDATE,OPTIONS,HEAD,PATCH",
+  credentials: true,
 }));
 
 app.get('/', (req, res) => {
