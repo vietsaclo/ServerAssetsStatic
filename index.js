@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const port = process.env.PORT;
 
-const whitelist = ['http://localhost:1114', 'mint.pepemetaai.co'];
+const whitelist = ['http://localhost:1114', 'catai-mint.pepemetaai.co'];
 app.use(cors({
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
