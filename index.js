@@ -2,6 +2,15 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 require('dotenv').config();
+const { Metaplex } = require("@metaplex-foundation/js");
+const { Connection, PublicKey, clusterApiUrl } = require("@solana/web3.js");
+
+// const RPC = String(process.env.SOLANA_RPC_HOST);
+const RPC = clusterApiUrl('devnet');
+const COLLECTION_ID = String(process.env.SUGAR_CANDY_MACHINE_COLLECTION_ID);
+
+const connection = new Connection(RPC);
+const metaplex = new Metaplex(connection);
 
 const port = process.env.PORT;
 
@@ -24,9 +33,34 @@ app.use(cors({
 
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.send('SERVER STATICS');
-})
+app.get('/', async (req, res) => {
+  res.send('K-CATs Server');
+});
+
+app.get('/inventory', async (req, res) => {
+  const pubkey = req.query.pubkey;
+  if (!pubkey) {
+    return res.send({
+      success: false,
+      message: 'missing pubkey',
+    });
+  }
+
+  const rawMints = await metaplex.nfts().findAllByOwner({
+    owner: new PublicKey(pubkey),
+  });
+
+  const mints = [];
+  for (let i = 0; i < rawMints.length; i++) {
+    if (rawMints[i].collection.address.toBase58() === COLLECTION_ID) {
+      mints.push(rawMints[i]);
+    }
+  }
+  return res.send({
+    success: true,
+    result: mints,
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on: http://localhost:${port}`);
