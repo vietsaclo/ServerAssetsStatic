@@ -5,8 +5,7 @@ require('dotenv').config();
 const { Metaplex } = require("@metaplex-foundation/js");
 const { Connection, PublicKey, clusterApiUrl } = require("@solana/web3.js");
 
-// const RPC = String(process.env.SOLANA_RPC_HOST);
-const RPC = clusterApiUrl('devnet');
+const RPC = String(process.env.SOLANA_RPC_HOST);
 const COLLECTION_ID = String(process.env.SUGAR_CANDY_MACHINE_COLLECTION_ID);
 
 const connection = new Connection(RPC);
@@ -49,10 +48,11 @@ app.get('/inventory', async (req, res) => {
   const rawMints = await metaplex.nfts().findAllByOwner({
     owner: new PublicKey(pubkey),
   });
+  console.log(rawMints[0]);
 
   const mints = [];
   for (let i = 0; i < rawMints.length; i++) {
-    if (rawMints[i].collection.address.toBase58() === COLLECTION_ID) {
+    if (rawMints[i].collection && rawMints[i].collection.address.toBase58() === COLLECTION_ID) {
       mints.push(rawMints[i]);
     }
   }
